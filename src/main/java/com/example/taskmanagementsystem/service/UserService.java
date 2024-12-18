@@ -1,6 +1,7 @@
 package com.example.taskmanagementsystem.service;
 
-import com.example.taskmanagementsystem.domain.RegistrationUserDto;
+import com.example.taskmanagementsystem.dto.user.RegistrationUserDTO;
+import com.example.taskmanagementsystem.dto.user.UserDTO;
 import com.example.taskmanagementsystem.entities.User;
 import com.example.taskmanagementsystem.mapper.UserMapper;
 import com.example.taskmanagementsystem.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -29,6 +31,10 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserMapper userMapper;
 
+    public List<UserDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return userMapper.EntitytoViewDTOList(users);
+    }
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -49,9 +55,7 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public User createNewUser(RegistrationUserDto registrationUserDto) {
-//        User user1 = userMapper.DtoToEntity(registrationUserDto);
-//        user1.setRole_id(roleService.getUserRole());
+    public User createNewUser(RegistrationUserDTO registrationUserDto) {
         User user = new User();
         user.setLogin(registrationUserDto.getLogin());
         user.setEmail(registrationUserDto.getEmail());

@@ -1,9 +1,9 @@
 package com.example.taskmanagementsystem.service;
 
-import com.example.taskmanagementsystem.domain.JwtRequest;
-import com.example.taskmanagementsystem.domain.JwtResponse;
-import com.example.taskmanagementsystem.domain.RegistrationUserDto;
-import com.example.taskmanagementsystem.domain.UserDto;
+import com.example.taskmanagementsystem.dto.jwt.JwtRequest;
+import com.example.taskmanagementsystem.dto.jwt.JwtResponse;
+import com.example.taskmanagementsystem.dto.user.RegistrationUserDTO;
+import com.example.taskmanagementsystem.dto.user.UserDTO;
 import com.example.taskmanagementsystem.entities.User;
 import com.example.taskmanagementsystem.exeptions.AppError;
 import com.example.taskmanagementsystem.utils.JwtTokenUtils;
@@ -35,7 +35,7 @@ public class AuthService {
         return ResponseEntity.ok(new JwtResponse(token));
     }
 
-    public ResponseEntity<?> createNewUser(@RequestBody RegistrationUserDto registrationUserDto) {
+    public ResponseEntity<?> createNewUser(@RequestBody RegistrationUserDTO registrationUserDto) {
         if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword())) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пароли не совпадают"), HttpStatus.BAD_REQUEST);
         }
@@ -43,6 +43,6 @@ public class AuthService {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с указанным email уже существует"), HttpStatus.BAD_REQUEST);
         }
         User user = userService.createNewUser(registrationUserDto);
-        return ResponseEntity.ok(new UserDto(user.getId(), user.getLogin(), user.getEmail(), user.getRole_id()));
+        return ResponseEntity.ok(new UserDTO(user.getId(), user.getLogin(), user.getEmail(), user.getRole_id()));
     }
 }

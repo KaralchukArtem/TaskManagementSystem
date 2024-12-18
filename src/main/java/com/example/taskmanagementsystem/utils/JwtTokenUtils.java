@@ -2,12 +2,14 @@ package com.example.taskmanagementsystem.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenUtils {
     @Value("${spring.jwt.secret}")
-    private String secret;
+    private String jwtSecret;
 
     @Value("${spring.jwt.lifetime}")
     private Duration jwtLifetime;
@@ -37,11 +39,15 @@ public class JwtTokenUtils {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(issuedDate)
                 .setExpiration(expiredDate)
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .signWith(getSignKey())
                 .compact();
     }
 
-    public String getUsername(String token) {
+    private Key getSignKey() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+    }
+
+    public String getUserEmail(String token) {
         return getAllClaimsFromToken(token).getSubject();
     }
 
@@ -50,8 +56,9 @@ public class JwtTokenUtils {
     }
 
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret)
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }

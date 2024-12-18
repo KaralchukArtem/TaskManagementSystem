@@ -1,5 +1,6 @@
 package com.example.taskmanagementsystem.config;
 
+import com.example.taskmanagementsystem.filter.JwtRequestFilter;
 import com.example.taskmanagementsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -34,9 +35,14 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/secured", "/info").authenticated()
-                        .requestMatchers("/admin").hasAnyRole("ADMIN")
-                        .requestMatchers("/registration").permitAll()
+                        .requestMatchers("/task/status").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(
+                                "/task/update", "/task/create", "/task/priority",
+                                "/task/author", "/task/delete", "/task/viewAll",
+                                "/task/viewByAuthor"
+                        ).hasRole("ADMIN")
+                        .requestMatchers("/registration", "/auth").permitAll()
+                        .requestMatchers("/comment/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling((exceptionHandling) -> exceptionHandling.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))

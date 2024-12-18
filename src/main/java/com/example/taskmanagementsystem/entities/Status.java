@@ -9,14 +9,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "role")
-public class Role {
+@Table(name = "status")
+public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @NotBlank(message = "Name is required.")
-    @Size(min = 3, max = 20, message = "Name must be between 3 and 20 characters.")
-    @Column(name = "name")
-    private String name;
+    @NotBlank(message = "Type is required.")
+    @Size(min = 3, max = 20, message = "Type must be between 3 and 20 characters.")
+    @Column(name = "type")
+    private String type;
 }
